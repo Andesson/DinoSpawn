@@ -1,31 +1,31 @@
 import React, { useState } from 'react';
-import { getPlayerInfoByName } from '@/shared/services/playerService'
+import { getDinoInfoByName } from '@/shared/services/dinoService'
 import { Button } from '@/shared/components/ui/button';
 
 
-const PlayerInfo = () => {
-    const [playerId, setPlayerId] = useState('');
-    const [playerData, setPlayerData] = useState<any>(null);
+const DinoInfo = () => {
+    const [DinoId, setDinoId] = useState('');
+    const [DinoData, setDinoData] = useState<any>(null);
     const [error, setError] = useState('');
 
-const fetchPlayerInfo = async () => {
+const fetchDinoInfo = async () => {
     try {
-      const data = await getPlayerInfoByName(playerId);
-      setPlayerData(data);
+      const data = await getDinoInfoByName(DinoId);
+      setDinoData(data);
       setError('');
     } catch (error) {
       setError('Erro ao obter informações do jogador.');
-      setPlayerData(null);
+      setDinoData(null);
     }
   };
 
   return (
     <div>
-      <Button color="red" onClick={fetchPlayerInfo}>
+      <Button color="red" onClick={fetchDinoInfo}>
         Custom Button
       </Button>
     </div>
   );
 };
 
-export default PlayerInfo;
+export default DinoInfo;
