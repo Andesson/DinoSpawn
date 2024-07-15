@@ -1,13 +1,21 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
 import { getDinoInfoByName } from '@/shared/services/dinoService';
 import { Button } from '@/shared/components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
+} from '@/shared/components/ui/form';
 import { Input } from '@/shared/components/ui/input';
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 import {
   Table,
   TableBody,
@@ -15,21 +23,21 @@ import {
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/shared/components/ui/table/table"
-
+  TableRow
+} from "@/shared/components/ui/table/table";
+import { DinoData } from '@/shared/types/DinoData';  // Import the DinoData interface
 
 const formSchema = z.object({
   dinoName: z.string().min(2).max(50),
-})
+});
 
 export default function Home() {
-  const [dinoData, setDinoData] = useState(null);
+  const [dinoData, setDinoData] = useState<DinoData | null>(null);
   const [error, setError] = useState('');
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: { dinoName: string }) => {
     try {
-      const data = await getDinoInfoByName(values.dinoName);
+      const data: DinoData = await getDinoInfoByName(values.dinoName);
       setDinoData(data);
       setError('');
     } catch (error) {
@@ -38,12 +46,12 @@ export default function Home() {
     }
   };
 
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       dinoName: "",
     },
-  })
+  });
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
@@ -58,10 +66,10 @@ export default function Home() {
                   <FormItem>
                     <FormLabel>Dino name</FormLabel>
                     <FormControl>
-                      <Input placeholder="shadcn" {...field} />
+                      <Input placeholder="Enter Dino Name" {...field} />
                     </FormControl>
                     <FormDescription>
-                      Dino name.
+                      Enter the name of the dinosaur.
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -71,25 +79,39 @@ export default function Home() {
             </form>
           </Form>
         </div>
-        {dinoData}
-        <div className="list">
-          <Table>
-            <TableCaption>A list of your recent invoices.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">Invoice</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Method</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              <TableRow>
-                <TableCell className="font-medium"></TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-        </div>
+        {error && <p className="error-message">{error}</p>}
+        {dinoData && (
+          <div className="dino-data">
+            <h1>Dino Details</h1>
+            <Table>
+              <TableCaption>Dinosaur Information</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Property</TableHead>
+                  <TableHead>Value</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">Dino</TableCell>
+                  <TableCell>{dinoData.dino}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">BP</TableCell>
+                  <TableCell>{dinoData.bp}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Coins</TableCell>
+                  <TableCell>{dinoData.coins}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell className="font-medium">Tokens</TableCell>
+                  <TableCell>{dinoData.tokens}</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
+        )}
       </div>
     </main>
   );
